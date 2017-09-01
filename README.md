@@ -45,28 +45,11 @@
 
 - Get and update if expired or too long
 ~~~ java
-<<<<<<< HEAD
 modelDataCache.get(dataNo, data -> getData(data));
 modelDataCache.gets(dataNo, dataList -> getData(new ArrayList<>(dataList)));
-=======
-<<<<<<< HEAD
-modelDataCache.get(dataNo, data -> getData(data));
-modelDataCache.gets(dataNo, dataList -> getData(new ArrayList<>(dataList)));
-=======
- modelDataCache.gets(dataNo, dataList -> getData(new ArrayList<>(dataList)));
->>>>>>> master
->>>>>>> master
 ~~~
 
 - Update to local and remote cache automatically
 ~~~ java
-<<<<<<< HEAD
 modelDataCache.updateCache(dataNo, data);
-=======
-<<<<<<< HEAD
-modelDataCache.updateCache(dataNo, data);
-=======
- modelDataCache.updateCache(dataNo, data);
->>>>>>> master
->>>>>>> master
 ~~~
