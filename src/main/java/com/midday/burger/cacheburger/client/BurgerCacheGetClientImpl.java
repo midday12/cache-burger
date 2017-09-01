@@ -7,11 +7,14 @@ import com.midday.burger.util.EmptyUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Pair;
+import org.springframework.beans.factory.DisposableBean;
+import rx.schedulers.Schedulers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
  * Created by midday on 2017-01-11.
  */
 @Slf4j
-public abstract class BurgerCacheGetClientImpl implements BurgerCacheGetClient {
+public abstract class BurgerCacheGetClientImpl implements BurgerCacheGetClient, DisposableBean {
 	protected BurgerCacheDefinition cacheDefinition;
 
 	protected ExecutorService esAsyncCacheExecutor = null;
@@ -45,6 +48,14 @@ public abstract class BurgerCacheGetClientImpl implements BurgerCacheGetClient {
 	final protected String cache_uptime = "cache_uptime";
 	final protected String cache_data = "data";
 	final protected DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+	@Override
+	public void destroy() throws Exception {
+		if(esAsyncCacheExecutor != null) {
+			esAsyncCacheExecutor.shutdown();
+			esAsyncCacheExecutor.awaitTermination(0, TimeUnit.SECONDS);
+		}
+	}
 
 	public <T, R> R get(T key, Function<T, R> getFunction) {
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -161,7 +172,8 @@ public abstract class BurgerCacheGetClientImpl implements BurgerCacheGetClient {
 			if(rTime == null || rTime.isBefore(LocalDateTime.now().minusSeconds(remoteCacheAsyncTime))) {
 				// 비동기로 cache update
 				log.info(String.format("###### Async cache update 요청 (%s) ######", key.toString()));
-				esAsyncCacheExecutor.submit(() -> {
+
+				rx.Observable cacheApplyObs = rx.Observable.create(onSubscribe -> {
 					// 지금 시간을 다시 확인한다.
 					Map<String, Object> newData = getReal(generateKey(key));
 					if(newData != null) {
@@ -178,6 +190,10 @@ public abstract class BurgerCacheGetClientImpl implements BurgerCacheGetClient {
 					}
 					log.info(String.format("###### Async cache update 갱신완료 (%s) ######", key.toString()));
 				});
+
+				cacheApplyObs
+						.subscribeOn(Schedulers.from(esAsyncCacheExecutor))
+						.subscribe();
 			}
 		}
 	}
