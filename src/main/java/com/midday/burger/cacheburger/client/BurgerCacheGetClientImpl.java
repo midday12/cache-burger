@@ -42,8 +42,8 @@ public abstract class BurgerCacheGetClientImpl implements BurgerCacheGetClient {
 	abstract protected boolean removeReal(String key);
 	abstract protected void removeReal(Collection<String> keys);
 
-	final protected String dealcache_uptime = "dealcache_uptime";
-	final protected String dealcache_data = "data";
+	final protected String cache_uptime = "cache_uptime";
+	final protected String cache_data = "data";
 	final protected DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	public <T, R> R get(T key, Function<T, R> getFunction) {
@@ -229,19 +229,19 @@ public abstract class BurgerCacheGetClientImpl implements BurgerCacheGetClient {
 
 	private <T> Map<String, Object> genData(T value) {
 		Map<String, Object> dataMap = new HashMap<>();
-		dataMap.put(dealcache_data, value);
-		dataMap.put(dealcache_uptime, now());
+		dataMap.put(cache_data, value);
+		dataMap.put(cache_uptime, now());
 
 		return dataMap;
 	}
 
 	@SuppressWarnings("unchecked")
 	private <R> Pair<R, LocalDateTime> parseData(Map<String, Object> dataMap) {
-		LocalDateTime t = dataMap.containsKey(dealcache_uptime) ?  time(dataMap.get(dealcache_uptime).toString()) : null;
+		LocalDateTime t = dataMap.containsKey(cache_uptime) ?  time(dataMap.get(cache_uptime).toString()) : null;
 
 		R r = null;
-		if(dataMap.containsKey(dealcache_data)) {
-			Object obj = dataMap.get(dealcache_data);
+		if(dataMap.containsKey(cache_data)) {
+			Object obj = dataMap.get(cache_data);
 			if(obj instanceof HashMap) {
 				try {
 					r = mapper.convertValue(obj, (Class<R>)cacheDefinition.getCacheModelClass());
@@ -257,7 +257,7 @@ public abstract class BurgerCacheGetClientImpl implements BurgerCacheGetClient {
 	}
 
 	private LocalDateTime parseUptime(Map<String, Object> dataMap) {
-		return dataMap.containsKey(dealcache_uptime) ?  time(dataMap.get(dealcache_uptime).toString()) : null;
+		return dataMap.containsKey(cache_uptime) ?  time(dataMap.get(cache_uptime).toString()) : null;
 	}
 
 	protected String now() {

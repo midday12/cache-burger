@@ -16,14 +16,14 @@ import java.util.concurrent.ExecutorService;
 /**
  * Created by midday on 2017-01-11.
  */
-public class EhDealCacheGetClient extends BurgerCacheGetClientImpl {
+public class EhCacheGetClient extends BurgerCacheGetClientImpl {
 	protected Cache localCache;
 
-	public EhDealCacheGetClient(BurgerCacheDefinition cacheDefinition) {
+	public EhCacheGetClient(BurgerCacheDefinition cacheDefinition) {
 		connect(cacheDefinition);
 	}
 
-	public EhDealCacheGetClient(BurgerCacheDefinition cacheDefinition, int remoteCacheAsyncTime, ExecutorService esAsyncCacheExecutor) {
+	public EhCacheGetClient(BurgerCacheDefinition cacheDefinition, int remoteCacheAsyncTime, ExecutorService esAsyncCacheExecutor) {
 		connect(cacheDefinition);
 
 		this.remoteCacheAsyncTime = remoteCacheAsyncTime;

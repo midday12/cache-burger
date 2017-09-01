@@ -10,8 +10,8 @@ import java.util.Map;
 /**
  * Created by midday on 2017-01-11.
  */
-public class EmptyDealCacheGetClient extends BurgerCacheGetClientImpl {
-	public EmptyDealCacheGetClient() {
+public class EmptyCacheGetClient extends BurgerCacheGetClientImpl {
+	public EmptyCacheGetClient() {
 	}
 
 	public boolean connect(BurgerCacheDefinition cacheDefinition) {

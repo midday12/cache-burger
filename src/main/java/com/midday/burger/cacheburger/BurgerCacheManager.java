@@ -1,10 +1,10 @@
 package com.midday.burger.cacheburger;
 
 import com.midday.burger.cacheburger.client.BurgerCacheGetClientImpl;
-import com.midday.burger.cacheburger.client.couchbase.CbDealCacheGetClient;
-import com.midday.burger.cacheburger.client.ehcache.EhDealCacheGetClient;
-import com.midday.burger.cacheburger.client.empty.EmptyDealCacheGetClient;
-import com.midday.burger.cacheburger.client.memcached.McDealCacheGetClient;
+import com.midday.burger.cacheburger.client.couchbase.CbCacheGetClient;
+import com.midday.burger.cacheburger.client.ehcache.EhCacheGetClient;
+import com.midday.burger.cacheburger.client.empty.EmptyCacheGetClient;
+import com.midday.burger.cacheburger.client.memcached.MclCacheGetClient;
 import com.midday.burger.cacheburger.model.BurgerCacheDefinition;
 
 import lombok.Getter;
@@ -35,8 +35,8 @@ public class BurgerCacheManager implements InitializingBean, DisposableBean {
 
 	protected ExecutorService esAsync = null;
 
-	protected BurgerCacheGetClientImpl lcClient = new EmptyDealCacheGetClient();
-	protected BurgerCacheGetClientImpl rcClient= new EmptyDealCacheGetClient();
+	protected BurgerCacheGetClientImpl lcClient = new EmptyCacheGetClient();
+	protected BurgerCacheGetClientImpl rcClient= new EmptyCacheGetClient();
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -45,14 +45,14 @@ public class BurgerCacheManager implements InitializingBean, DisposableBean {
 		}
 
 		if(!StringUtils.isEmpty(cacheDefinition.getName()) && cacheDefinition.getLocalCacheTime() > 0) {
-			lcClient = new EhDealCacheGetClient(cacheDefinition, remoteCacheAsyncTime, esAsync);
+			lcClient = new EhCacheGetClient(cacheDefinition, remoteCacheAsyncTime, esAsync);
 		}
 
 		if(cacheDefinition.getRemoteCacheTime() > 0) {
 			if (!StringUtils.isEmpty(cacheDefinition.getMemcachedServer())) {
-				rcClient = new McDealCacheGetClient(cacheDefinition, remoteCacheAsyncTime, esAsync, lcClient);
+				rcClient = new MclCacheGetClient(cacheDefinition, remoteCacheAsyncTime, esAsync, lcClient);
 			} else if (!StringUtils.isEmpty(cacheDefinition.getCouchbaseNode())) {
-				rcClient = new CbDealCacheGetClient(cacheDefinition, remoteCacheAsyncTime, esAsync, lcClient);
+				rcClient = new CbCacheGetClient(cacheDefinition, remoteCacheAsyncTime, esAsync, lcClient);
 			}
 		}
 	}

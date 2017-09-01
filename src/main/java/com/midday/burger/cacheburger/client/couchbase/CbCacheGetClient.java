@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
  * Created by midday on 2017-01-11.
  */
 @Slf4j
-public class CbDealCacheGetClient extends BurgerCacheGetClientImpl {
+public class CbCacheGetClient extends BurgerCacheGetClientImpl {
 	protected BurgerCbDatabaseClient cbCacheBucket;
 
-	public CbDealCacheGetClient(BurgerCacheDefinition cacheDefinition) {
+	public CbCacheGetClient(BurgerCacheDefinition cacheDefinition) {
 		connect(cacheDefinition);
 	}
 
-	public CbDealCacheGetClient(BurgerCacheDefinition cacheDefinition, int remoteCacheAsyncTime, ExecutorService esAsyncCacheExecutor, BurgerCacheGetClientImpl localCacheClientToSync) {
+	public CbCacheGetClient(BurgerCacheDefinition cacheDefinition, int remoteCacheAsyncTime, ExecutorService esAsyncCacheExecutor, BurgerCacheGetClientImpl localCacheClientToSync) {
 		connect(cacheDefinition);
 
 		this.remoteCacheAsyncTime = remoteCacheAsyncTime;
@@ -60,14 +60,14 @@ public class CbDealCacheGetClient extends BurgerCacheGetClientImpl {
 						try {
 							return cbCacheBucket.get(key, Map.class);
 						} catch(Exception e) {
-							log.error("CbDealCacheClient.getReal : " + e.toString());
+							log.error("CbCacheClient.getReal : " + e.toString());
 						}
 						return rx.Observable.empty();
 					})
 					.map(dataMap -> (Map<String, Object>)dataMap)
 					.toBlocking().singleOrDefault(null);
 		} catch(Exception e) {
-			log.error("CbDealCacheClient.getReal : " + e.toString());
+			log.error("CbCacheClient.getReal : " + e.toString());
 		}
 
 		return null;
@@ -82,7 +82,7 @@ public class CbDealCacheGetClient extends BurgerCacheGetClientImpl {
 					.toMap(entry -> entry.getKey(), entry -> entry.getValue().getPropertyMap())
 					.toBlocking().single();
 		} catch(Exception e) {
-			log.error("CbDealCacheClient.get : " + e.toString());
+			log.error("CbCacheClient.get : " + e.toString());
 		}
 
 		return EmptyUtil.emptyMap();
@@ -100,7 +100,7 @@ public class CbDealCacheGetClient extends BurgerCacheGetClientImpl {
 		try {
 			cbCacheBucket.put(key, value, Map.class, cacheTime).toBlocking().single();
 		} catch (Exception e) {
-			log.error("CbDealCacheClient.put : " + e.toString());
+			log.error("CbCacheClient.put : " + e.toString());
 		}
 	}
 
@@ -118,7 +118,7 @@ public class CbDealCacheGetClient extends BurgerCacheGetClientImpl {
 					try {
 						return new BurgerCbDocument(entry.getKey(), new ObjectMapper().writeValueAsString(entry.getValue()));
 					} catch (Exception e) {
-						log.error("CbDealCacheClient.put : " + e.toString());
+						log.error("CbCacheClient.put : " + e.toString());
 						return null;
 					}
 				})
@@ -138,7 +138,7 @@ public class CbDealCacheGetClient extends BurgerCacheGetClientImpl {
 		try {
 			return cbCacheBucket.remove(key).toBlocking().single();
 		} catch (Exception e) {
-			log.error("CbDealCacheClient.remove : " + e.toString());
+			log.error("CbCacheClient.remove : " + e.toString());
 		}
 
 		return false;

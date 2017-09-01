@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
  * Created by midday on 2017-01-11.
  */
 @Slf4j
-public class McDealCacheGetClient extends BurgerCacheGetClientImpl {
+public class MclCacheGetClient extends BurgerCacheGetClientImpl {
 	private MemcachedClient mcClient;
 
-	public McDealCacheGetClient(BurgerCacheDefinition cacheDefinition) {
+	public MclCacheGetClient(BurgerCacheDefinition cacheDefinition) {
 		connect(cacheDefinition);
 	}
 
-	public McDealCacheGetClient(BurgerCacheDefinition cacheDefinition, int remoteCacheAsyncTime, ExecutorService esAsyncCacheExecutor, BurgerCacheGetClientImpl localCacheClientToSync) {
+	public MclCacheGetClient(BurgerCacheDefinition cacheDefinition, int remoteCacheAsyncTime, ExecutorService esAsyncCacheExecutor, BurgerCacheGetClientImpl localCacheClientToSync) {
 		connect(cacheDefinition);
 
 		this.remoteCacheAsyncTime = remoteCacheAsyncTime;
@@ -42,7 +42,7 @@ public class McDealCacheGetClient extends BurgerCacheGetClientImpl {
 				return true;
 			}
 		} catch(Exception e) {
-			log.error("McDealCacheClient connection error : " + e.toString());
+			log.error("McCacheClient connection error : " + e.toString());
 		}
 
 		return false;
@@ -70,7 +70,7 @@ public class McDealCacheGetClient extends BurgerCacheGetClientImpl {
 			mcClient.set(key, cacheDefinition.getRemoteCacheTime() * 1000, value)
 					.get(1, TimeUnit.MINUTES);
 		} catch(Exception e) {
-			log.error("McDealCacheClient putReal error : " + e.toString());
+			log.error("McCacheClient putReal error : " + e.toString());
 		}
 	}
 
@@ -80,7 +80,7 @@ public class McDealCacheGetClient extends BurgerCacheGetClientImpl {
 				mcClient.set(entry.getKey(), cacheDefinition.getRemoteCacheTime() * 1000, entry.getValue())
 						.get(1, TimeUnit.MINUTES);
 			} catch (InterruptedException | TimeoutException | ExecutionException e) {
-				log.error("McDealCacheClient removeReal delete error : " + e.toString());
+				log.error("McCacheClient removeReal delete error : " + e.toString());
 			}
 		});
 	}
@@ -91,7 +91,7 @@ public class McDealCacheGetClient extends BurgerCacheGetClientImpl {
 		try {
 			return mcClient.delete(key).get();
 		} catch(InterruptedException | ExecutionException e) {
-			log.error("McDealCacheClient removeReal error : " + e.toString());
+			log.error("McCacheClient removeReal error : " + e.toString());
 		}
 
 		return false;
@@ -103,7 +103,7 @@ public class McDealCacheGetClient extends BurgerCacheGetClientImpl {
 				mcClient.delete(key)
 						.get(1, TimeUnit.MINUTES);
 			} catch (InterruptedException | TimeoutException | ExecutionException e) {
-				log.error("McDealCacheClient removeReal delete error : " + e.toString());
+				log.error("McCacheClient removeReal delete error : " + e.toString());
 			}
 		});
 	}
